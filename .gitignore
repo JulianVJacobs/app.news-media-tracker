@@ -1,0 +1,52 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage
+.eslintcache
+
+# Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
+node_modules
+
+# OSX
+.DS_Store
+
+# # Agent context files (only encrypted versions should be committed)
+# .github/copilot/contexts/*.md
+# .github/copilot-instructions.md
+# !.github/contexts/copilot/*.enc
+# !.github/copilot-instructions.md.enc
+
+# # Copilot tooling venv
+# .github/copilot/.venv
+
+release/app/dist
+# Build artifacts
+dist
+.next
+build
+release/build
+
+# Native modules
+
+.idea
+npm-debug.log.*
+*.css.d.ts
+*.sass.d.ts
+*.scss.d.ts
+
+# environment variables
+.env
+.atom-host/
+
+*.db
+
+# remove generated cache
+public/cache.json

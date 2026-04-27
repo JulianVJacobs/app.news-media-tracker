@@ -1,0 +1,42 @@
+{
+    "name": "app.news-media-tracker",
+    "dockerComposeFile": [
+        "../../docker-compose.yml"
+    ],
+    "service": "workspace-app",
+    "runServices": [
+        "atom-db",
+        "atom-cache",
+        "atom-host",
+        "workspace-app",
+        "workspace-service"
+    ],
+    "workspaceFolder": "/workspace/app.news-media-tracker",
+    "shutdownAction": "stopCompose",
+    "forwardPorts": [
+        3000,
+        3001,
+        62080,
+        63306,
+        63790
+    ],
+    "portsAttributes": {
+        "3000": {
+            "label": "Next.js Dev Server"
+        },
+        "3001": {
+            "label": "Electron Dev"
+        },
+        "62080": {
+            "label": "AtoM Host"
+        },
+        "63306": {
+            "label": "AtoM Database (MariaDB)"
+        },
+        "63790": {
+            "label": "AtoM Cache (Redis)"
+        }
+    },
+    "postCreateCommand": "npm install --legacy-peer-deps",
+    "remoteUser": "vscode"
+}
