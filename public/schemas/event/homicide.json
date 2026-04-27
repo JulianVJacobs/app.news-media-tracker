@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "optional": false,
+  "properties": {
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "optional": true
+      },
+      "optional": true
+    },
+    "notes": {
+      "type": "string",
+      "optional": true
+    }
+  }
+}

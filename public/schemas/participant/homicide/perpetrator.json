@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "aliases": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "optional": true
+        },
+        "relationshipToVictim": {
+            "type": "string",
+            "optional": true
+        },
+        "conviction": {
+            "type": "string",
+            "optional": true
+        }
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "compilerOptions": {
+        "incremental": true,
+        "target": "es2022",
+        "module": "commonjs",
+        "lib": [
+            "dom",
+            "es2022"
+        ],
+        "jsx": "react-jsx",
+        "strict": true,
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "allowJs": true,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./*"
+            ],
+            "@/components/*": [
+                "./components/*"
+            ],
+            "@/lib/*": [
+                "./lib/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "test",
+        "release/build",
+        "release/app/dist",
+        "app",
+        "out",
+        ".next"
+    ]
+}
