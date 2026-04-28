@@ -731,13 +731,13 @@ export const migrationVictimMergeAuditColumn = `ALTER TABLE victims ADD COLUMN m
 export const migrationPerpetratorMergeAuditColumn = `ALTER TABLE perpetrators ADD COLUMN merge_audit TEXT`;
 export const migrationVictimPromotionAuditColumn = `ALTER TABLE victims ADD COLUMN promotion_audit TEXT`;
 export const migrationPerpetratorPromotionAuditColumn = `ALTER TABLE perpetrators ADD COLUMN promotion_audit TEXT`;
-export const migrationVictimNationalityColumn = `ALTER TABLE victims ADD COLUMN IF NOT EXISTS nationality TEXT`;
-export const migrationVictimAgeDescriptorColumn = `ALTER TABLE victims ADD COLUMN IF NOT EXISTS age_descriptor TEXT`;
-export const migrationVictimDateOfDeathModeColumn = `ALTER TABLE victims ADD COLUMN IF NOT EXISTS date_of_death_mode TEXT`;
-export const migrationVictimDateOfDeathEndColumn = `ALTER TABLE victims ADD COLUMN IF NOT EXISTS date_of_death_end TEXT`;
-export const migrationVictimAliasesColumn = `ALTER TABLE victims ADD COLUMN IF NOT EXISTS victim_aliases TEXT`;
-export const migrationPerpetratorAliasesColumn = `ALTER TABLE perpetrators ADD COLUMN IF NOT EXISTS suspect_aliases TEXT`;
-export const migrationPerpetratorChargesColumn = `ALTER TABLE perpetrators ADD COLUMN IF NOT EXISTS charges TEXT`;
+export const migrationVictimNationalityColumn = `ALTER TABLE victims ADD COLUMN nationality TEXT`;
+export const migrationVictimAgeDescriptorColumn = `ALTER TABLE victims ADD COLUMN age_descriptor TEXT`;
+export const migrationVictimDateOfDeathModeColumn = `ALTER TABLE victims ADD COLUMN date_of_death_mode TEXT`;
+export const migrationVictimDateOfDeathEndColumn = `ALTER TABLE victims ADD COLUMN date_of_death_end TEXT`;
+export const migrationVictimAliasesColumn = `ALTER TABLE victims ADD COLUMN victim_aliases TEXT`;
+export const migrationPerpetratorAliasesColumn = `ALTER TABLE perpetrators ADD COLUMN suspect_aliases TEXT`;
+export const migrationPerpetratorChargesColumn = `ALTER TABLE perpetrators ADD COLUMN charges TEXT`;
 // NOTE: merge_audit and promotion_audit are JSON-serialized payloads stored as TEXT.
 
 export const migrationBackfillVictimsToActors = `INSERT OR IGNORE INTO actor (

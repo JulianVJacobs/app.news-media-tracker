@@ -5,9 +5,6 @@
     ],
     "service": "workspace-app",
     "runServices": [
-        "atom-db",
-        "atom-cache",
-        "atom-host",
         "workspace-app",
         "workspace-service"
     ],

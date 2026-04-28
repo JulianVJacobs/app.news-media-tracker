@@ -69,7 +69,26 @@ const buildResourceUrl = (
 };
 
 const parseJson = async <T>(response: Response): Promise<T> => {
-  return (await response.json()) as T;
+  const contentType = response.headers.get('content-type');
+  const isJsonResponse = contentType?.includes('application/json');
+
+  if (!isJsonResponse) {
+    const text = await response.text();
+    const preview = text.substring(0, 100).trim();
+    throw new Error(
+      `AtoM host API response was ${contentType || 'non-JSON'}, not JSON. ` +
+      `Status: ${response.status}. Response: "${preview}${text.length > 100 ? '...' : ''}". ` +
+      `Check that WORKBENCH_PLUGIN_API_BASE_URL is configured correctly and AtoM is running.`
+    );
+  }
+
+  try {
+    return (await response.json()) as T;
+  } catch (error) {
+    throw new Error(
+      `Failed to parse JSON from AtoM host API: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
 };
 
 const toPluginErrorMessage = (
