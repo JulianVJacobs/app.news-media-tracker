@@ -27,6 +27,11 @@ const pluginResourceByRole = (role: string) => {
   return null;
 };
 
+const shouldFallbackToLocalApi = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes('Status: 404') || message.includes('not JSON');
+};
+
 // Dynamic participant API route by role
 export async function GET(
   request: NextRequest,
@@ -41,71 +46,81 @@ export async function GET(
         { status: 400 },
       );
     }
-    const parsedLimit = Number.parseInt(
-      request.nextUrl.searchParams.get('limit') || '50',
-      10,
-    );
-    const parsedOffset = Number.parseInt(
-      request.nextUrl.searchParams.get('offset') || '0',
-      10,
-    );
-    const limit = Number.isNaN(parsedLimit) ? 50 : parsedLimit;
-    const offset = Number.isNaN(parsedOffset) ? 0 : parsedOffset;
-    const search = request.nextUrl.searchParams.get('search') || '';
+    try {
+      const parsedLimit = Number.parseInt(
+        request.nextUrl.searchParams.get('limit') || '50',
+        10,
+      );
+      const parsedOffset = Number.parseInt(
+        request.nextUrl.searchParams.get('offset') || '0',
+        10,
+      );
+      const limit = Number.isNaN(parsedLimit) ? 50 : parsedLimit;
+      const offset = Number.isNaN(parsedOffset) ? 0 : parsedOffset;
+      const search = request.nextUrl.searchParams.get('search') || '';
 
-    if (resource === 'victims') {
-      const { items } = await listPluginResource<VictimPayload>('victims', {
-        search,
-        limit,
-        offset,
-      });
-      return NextResponse.json({
-        success: true,
-        data: items.map((item) => ({
-          ...item,
-          articleId: item.eventId,
-          victimName: item.name,
-          role,
-        })),
-      });
-    }
-
-    if (resource === 'perpetrators') {
-      const { items } = await listPluginResource<PerpetratorPayload>(
-        'perpetrators',
-        {
+      if (resource === 'victims') {
+        const { items } = await listPluginResource<VictimPayload>('victims', {
           search,
           limit,
           offset,
-        },
+        });
+        return NextResponse.json({
+          success: true,
+          data: items.map((item) => ({
+            ...item,
+            articleId: item.eventId,
+            victimName: item.name,
+            role,
+          })),
+        });
+      }
+
+      if (resource === 'perpetrators') {
+        const { items } = await listPluginResource<PerpetratorPayload>(
+          'perpetrators',
+          {
+            search,
+            limit,
+            offset,
+          },
+        );
+        return NextResponse.json({
+          success: true,
+          data: items.map((item) => ({
+            ...item,
+            articleId: item.eventId,
+            perpetratorName: item.name,
+            role,
+          })),
+        });
+      }
+
+      if (resource === 'actors') {
+        const { items } = await listPluginResource<ActorPayload>('actors', {
+          search,
+          limit,
+          offset,
+        });
+        return NextResponse.json({
+          success: true,
+          data: items.map((item) => ({ ...item, role })),
+        });
+      }
+
+      return NextResponse.json(
+        { success: false, error: 'Unsupported participant role' },
+        { status: 400 },
       );
-      return NextResponse.json({
-        success: true,
-        data: items.map((item) => ({
-          ...item,
-          articleId: item.eventId,
-          perpetratorName: item.name,
-          role,
-        })),
-      });
+    } catch (error) {
+      if (!shouldFallbackToLocalApi(error)) {
+        throw error;
+      }
+      console.warn(
+        `Plugin API unavailable for participant role ${role}; falling back to local database.`,
+        error instanceof Error ? error.message : String(error),
+      );
     }
-
-    if (resource === 'actors') {
-      const { items } = await listPluginResource<ActorPayload>('actors', {
-        search,
-        limit,
-        offset,
-      });
-      return NextResponse.json({
-        success: true,
-        data: items.map((item) => ({ ...item, role })),
-      });
-    }
-
-    return NextResponse.json(
-      { success: false, error: 'Unsupported participant role' },
-      { status: 400 },
-    );
   }
 
   if (!(dbm instanceof DatabaseManagerServer))

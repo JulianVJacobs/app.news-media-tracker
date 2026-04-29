@@ -22,6 +22,11 @@ const ensureServerDatabase = async () => {
   return dbm.getLocal();
 };
 
+const shouldFallbackToLocalApi = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes('Status: 404') || message.includes('not JSON');
+};
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -40,32 +45,45 @@ export async function GET(request: Request) {
     const offset = Number.isNaN(parsedOffset) ? 0 : parsedOffset;
 
     if (isWorkbenchPluginApiEnabled()) {
-      const { items, total } = await listPluginResource<VictimPayload>('victims', {
-        search,
-        eventId: articleId,
-        limit,
-        offset,
-      });
+      try {
+        const { items, total } = await listPluginResource<VictimPayload>(
+          'victims',
+          {
+            search,
+            eventId: articleId,
+            limit,
+            offset,
+          },
+        );
 
-      const data = items.map((item) => ({
-        id: item.id,
-        articleId: item.eventId,
-        victimName: item.name,
-      }));
-      if (id) {
-        const found = data.find((item) => item.id === id) ?? null;
-        return NextResponse.json({ success: true, data: found });
+        const data = items.map((item) => ({
+          id: item.id,
+          articleId: item.eventId,
+          victimName: item.name,
+        }));
+        if (id) {
+          const found = data.find((item) => item.id === id) ?? null;
+          return NextResponse.json({ success: true, data: found });
+        }
+        return NextResponse.json({
+          success: true,
+          data,
+          pagination: {
+            total,
+            limit,
+            offset,
+            hasMore: offset + limit < total,
+          },
+        });
+      } catch (error) {
+        if (!shouldFallbackToLocalApi(error)) {
+          throw error;
+        }
+        console.warn(
+          'Plugin API unavailable for victims; falling back to local database.',
+          error instanceof Error ? error.message : String(error),
+        );
       }
-      return NextResponse.json({
-        success: true,
-        data,
-        pagination: {
-          total,
-          limit,
-          offset,
-          hasMore: offset + limit < total,
-        },
-      });
     }
 
     const db = await ensureServerDatabase();
